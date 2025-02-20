@@ -10,7 +10,7 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return Auth::user()->tasks; 
+        return Auth::user()->tasks;
     }
 
     public function store(Request $request)
@@ -20,6 +20,7 @@ class TaskController extends Controller
             'description' => 'nullable|string',
             'priority' => 'integer|min:1|max:5',
             'due_date' => 'nullable|date',
+            'status' => 'in:pendiente,completada',
         ]);
 
         $task = Auth::user()->tasks()->create($request->all());
@@ -27,15 +28,29 @@ class TaskController extends Controller
         return response()->json($task);
     }
 
-    public function update(Request $request, Task $task)
+    public function update(Request $request, $id)
     {
+        $task = Task::find($id);
+
+        if (!$task) {
+            return response()->json(['error' => 'Tarea no encontrada'], 404);
+        }
+
         if ($task->user_id !== Auth::id()) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'priority' => 'integer|min:1|max:5',
+            'due_date' => 'nullable|date',
+            'status' => 'in:pendiente,completada',
+        ]);
+
         $task->update($request->all());
 
-        return response()->json($task);
+        return response()->json(['message' => 'Tarea actualizada', 'task' => $task]);
     }
 
     public function destroy(Task $task)
