@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FolderController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,4 +14,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::put('/tasks/{task}', [TaskController::class, 'update']);
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
+
+    Route::get('/folders', [FolderController::class, 'index']);
+    Route::post('/folders', [FolderController::class, 'store']);
+    Route::get('/folders/{id}/tasks', [FolderController::class, 'show']);
+    Route::put('/tasks/{id}/move', [FolderController::class, 'moveTask']);
+    Route::delete('/folders/{id}', [FolderController::class, 'destroy']);
+    Route::put('/folders/{id}', [FolderController::class, 'update']);
 });
