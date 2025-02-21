@@ -18,12 +18,18 @@ class TaskController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'priority' => 'integer|min:1|max:5',
+            'priority' => 'required|in:baja,media,alta,urgente',
             'due_date' => 'nullable|date',
-            'status' => 'in:pendiente,completada',
+            'status' => 'required|in:pendiente,completada',
         ]);
 
-        $task = Auth::user()->tasks()->create($request->all());
+        $task = Auth::user()->tasks()->create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'priority' => $request->priority,
+            'due_date' => $request->due_date,
+            'status' => $request->status,
+        ]);
 
         return response()->json($task);
     }
@@ -43,13 +49,18 @@ class TaskController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'priority' => 'integer|min:1|max:5',
+            'priority' => 'required|in:baja,media,alta,urgente',
             'due_date' => 'nullable|date',
-            'status' => 'in:pendiente,completada',
+            'status' => 'required|in:pendiente,completada',
         ]);
 
-        $task->update($request->all());
-
+        $task->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'priority' => $request->priority,
+            'due_date' => $request->due_date,
+            'status' => $request->status,
+        ]);
         return response()->json(['message' => 'Tarea actualizada', 'task' => $task]);
     }
 
