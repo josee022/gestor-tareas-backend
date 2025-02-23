@@ -11,7 +11,8 @@ class FolderController extends Controller
 {
     public function index()
     {
-        return response()->json(Folder::all());
+        $user = Auth::user();
+        return response()->json($user->folders); // Solo devuelve las carpetas del usuario autenticado
     }
 
     public function store(Request $request)
@@ -22,6 +23,7 @@ class FolderController extends Controller
 
         $folder = Folder::create([
             'name' => $request->name,
+            'user_id' => Auth::id(), // Asigna la carpeta al usuario autenticado
         ]);
 
         return response()->json($folder, 201);
@@ -29,10 +31,11 @@ class FolderController extends Controller
 
     public function update(Request $request, $id)
     {
-        $folder = Folder::find($id);
+        $user = Auth::user();
+        $folder = Folder::where('id', $id)->where('user_id', $user->id)->first();
 
         if (!$folder) {
-            return response()->json(['error' => 'Carpeta no encontrada'], 404);
+            return response()->json(['error' => 'Carpeta no encontrada o no pertenece al usuario'], 404);
         }
 
         $request->validate([
@@ -46,46 +49,60 @@ class FolderController extends Controller
 
     public function show($id)
     {
-        $folder = Folder::find($id);
+        $user = Auth::user();
+
+        $folder = Folder::where('id', $id)->where('user_id', $user->id)->first();
 
         if (!$folder) {
-            return response()->json(['error' => 'Carpeta no encontrada'], 404);
+            return response()->json(['error' => 'Carpeta no encontrada o no pertenece al usuario'], 404);
         }
 
-        return response()->json($folder->tasks);
+        return response()->json([
+            'folder' => $folder,
+            'tasks' => $folder->tasks,
+        ]);
     }
 
     public function destroy($id)
     {
-        $folder = Folder::find($id);
+        $user = Auth::user();
+        $folder = Folder::where('id', $id)->where('user_id', $user->id)->first();
 
         if (!$folder) {
-            return response()->json(['error' => 'Carpeta no encontrada'], 404);
+            return response()->json(['error' => 'Carpeta no encontrada o no pertenece al usuario'], 404);
         }
 
         Task::where('folder_id', $id)->update(['folder_id' => null]);
-
         $folder->delete();
 
         return response()->json(['message' => 'Carpeta eliminada correctamente']);
     }
 
-
     public function moveTask(Request $request, $taskId)
     {
-        $task = Task::find($taskId);
+        $user = Auth::user();
+
+        // Buscar la tarea asegurando que pertenece al usuario autenticado
+        $task = Task::where('id', $taskId)->where('user_id', $user->id)->first();
 
         if (!$task) {
-            return response()->json(['error' => 'Tarea no encontrada'], 404);
+            return response()->json(['error' => 'Tarea no encontrada o no pertenece al usuario'], 404);
         }
 
+        // Validar que el folder_id existe y pertenece al usuario
         $request->validate([
             'folder_id' => 'nullable|exists:folders,id',
         ]);
 
-        $task->update([
-            'folder_id' => $request->folder_id,
-        ]);
+        if ($request->folder_id) {
+            $folder = Folder::where('id', $request->folder_id)->where('user_id', $user->id)->first();
+            if (!$folder) {
+                return response()->json(['error' => 'La carpeta destino no pertenece al usuario'], 403);
+            }
+        }
+
+        // Mover la tarea a la nueva carpeta (o quitarla si es null)
+        $task->update(['folder_id' => $request->folder_id]);
 
         return response()->json(['message' => 'Tarea movida con éxito', 'task' => $task]);
     }
