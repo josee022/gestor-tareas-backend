@@ -17,8 +17,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/folders', [FolderController::class, 'index']);
     Route::post('/folders', [FolderController::class, 'store']);
+    Route::put('/folders/{id}', [FolderController::class, 'update']);
+    Route::delete('/folders/{id}', [FolderController::class, 'destroy']);
+    
     Route::get('/folders/{id}/tasks', [FolderController::class, 'show']);
     Route::put('/tasks/{id}/move', [FolderController::class, 'moveTask']);
-    Route::delete('/folders/{id}', [FolderController::class, 'destroy']);
-    Route::put('/folders/{id}', [FolderController::class, 'update']);
 });
