@@ -12,7 +12,7 @@ class FolderController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return response()->json($user->folders); // Solo devuelve las carpetas del usuario autenticado
+        return response()->json($user->folders);
     }
 
     public function store(Request $request)
@@ -23,7 +23,7 @@ class FolderController extends Controller
 
         $folder = Folder::create([
             'name' => $request->name,
-            'user_id' => Auth::id(), // Asigna la carpeta al usuario autenticado
+            'user_id' => Auth::id(),
         ]);
 
         return response()->json($folder, 201);
@@ -82,14 +82,12 @@ class FolderController extends Controller
     {
         $user = Auth::user();
 
-        // Buscar la tarea asegurando que pertenece al usuario autenticado
         $task = Task::where('id', $taskId)->where('user_id', $user->id)->first();
 
         if (!$task) {
             return response()->json(['error' => 'Tarea no encontrada o no pertenece al usuario'], 404);
         }
 
-        // Validar que el folder_id existe y pertenece al usuario
         $request->validate([
             'folder_id' => 'nullable|exists:folders,id',
         ]);
@@ -101,9 +99,27 @@ class FolderController extends Controller
             }
         }
 
-        // Mover la tarea a la nueva carpeta (o quitarla si es null)
         $task->update(['folder_id' => $request->folder_id]);
 
         return response()->json(['message' => 'Tarea movida con éxito', 'task' => $task]);
+    }
+
+    public function removeTaskFromFolder($taskId)
+    {
+        $user = Auth::user();
+
+        $task = Task::where('id', $taskId)->where('user_id', $user->id)->first();
+
+        if (!$task) {
+            return response()->json(['error' => 'Tarea no encontrada o no pertenece al usuario'], 404);
+        }
+
+        if (!$task->folder_id) {
+            return response()->json(['message' => 'La tarea ya no está en ninguna carpeta'], 200);
+        }
+
+        $task->update(['folder_id' => null]);
+
+        return response()->json(['message' => 'Tarea removida de la carpeta con éxito', 'task' => $task]);
     }
 }
