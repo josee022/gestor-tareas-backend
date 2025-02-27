@@ -17,7 +17,8 @@ class Task extends Model
         'priority',
         'due_date',
         'user_id',
-        'folder_id'
+        'folder_id',
+        'is_pinned',
     ];
 
     public function user(): BelongsTo
