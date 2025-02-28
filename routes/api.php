@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
+// Ruta protegidas
 Route::middleware('auth:sanctum')->group(function () {
     // Rutas para acciones de tasks(notas)
     Route::get('/tasks', [TaskController::class, 'index']);
@@ -30,4 +32,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Ruta para fijar una nota
     Route::put('/tasks/{id}/pin', [TaskController::class, 'togglePin']);
+
+    // Rutas para funciones de etiquetas
+    Route::get('/tags', [TagController::class, 'index']);
+    Route::post('/tags', [TagController::class, 'store']);
+    Route::delete('/tags/{id}', [TagController::class, 'destroy']);
+
+    // Rutas para asignar y quitar etiquetas
+    Route::post('/tasks/{taskId}/tags', [TagController::class, 'assignTagToTask']);
+    Route::delete('/tasks/{taskId}/tags/{tagId}', [TagController::class, 'removeTagFromTask']);
 });
