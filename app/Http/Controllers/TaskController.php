@@ -93,4 +93,21 @@ class TaskController extends Controller
             'task' => $task,
         ]);
     }
+
+    public function calendarTasks()
+    {
+        $tasks = Task::whereNotNull('due_date')
+            ->select('id', 'title', 'due_date')
+            ->get()
+            ->map(function ($task) {
+                return [
+                    'id' => $task->id,
+                    'title' => $task->title,
+                    'start' => $task->due_date,
+                    'end' => $task->due_date,
+                ];
+            });
+
+        return response()->json($tasks);
+    }
 }
