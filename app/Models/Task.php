@@ -17,7 +17,8 @@ class Task extends Model
         'priority',
         'due_date',
         'user_id',
-        'folder_id'
+        'folder_id',
+        'is_pinned',
     ];
 
     public function user(): BelongsTo
@@ -28,5 +29,10 @@ class Task extends Model
     public function folder()
     {
         return $this->belongsTo(Folder::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'task_tag');
     }
 }

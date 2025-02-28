@@ -10,8 +10,9 @@ class TaskController extends Controller
 {
     public function index()
     {
-        return Auth::user()->tasks;
+        return Auth::user()->tasks()->with('tags')->get();
     }
+
 
     public function store(Request $request)
     {
@@ -73,5 +74,23 @@ class TaskController extends Controller
         $task->delete();
 
         return response()->json(['message' => 'Tarea eliminada']);
+    }
+
+    public function togglePin($id)
+    {
+        $user = Auth::user();
+
+        $task = Task::where('id', $id)->where('user_id', $user->id)->first();
+
+        if (!$task) {
+            return response()->json(['error' => 'Tarea no encontrada o no pertenece al usuario'], 404);
+        }
+
+        $task->update(['is_pinned' => !$task->is_pinned]);
+
+        return response()->json([
+            'message' => $task->is_pinned ? 'Tarea fijada' : 'Tarea desfijada',
+            'task' => $task,
+        ]);
     }
 }
