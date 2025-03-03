@@ -21,6 +21,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . /var/www/html
 WORKDIR /var/www/html
 
+# Configurar la conexión a PostgreSQL en el entorno
+ENV DB_CONNECTION=pgsql
+
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 RUN php artisan config:clear && php artisan cache:clear && php artisan key:generate
