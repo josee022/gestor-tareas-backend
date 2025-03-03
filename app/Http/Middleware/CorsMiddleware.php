@@ -15,10 +15,20 @@ class CorsMiddleware
     {
         $response = $next($request);
 
-        $response->header('Access-Control-Allow-Origin', 'https://gestor-tareas-dk2yrlvcq-josee022s-projects.vercel.app');
+        // Configuración CORS
+        $response->header('Access-Control-Allow-Origin', 'https://gestor-tareas-beige.vercel.app');
         $response->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         $response->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
         $response->header('Access-Control-Allow-Credentials', 'true');
+
+        // Manejo de preflight (opcional)
+        if ($request->isMethod('OPTIONS')) {
+            return response()->json('OK', 200, [
+                'Access-Control-Allow-Origin' => 'https://gestor-tareas-beige.vercel.app',
+                'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers' => 'Content-Type, Authorization, X-Requested-With',
+            ]);
+        }
 
         return $response;
     }
