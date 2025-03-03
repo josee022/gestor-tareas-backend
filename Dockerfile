@@ -28,8 +28,11 @@ RUN chmod -R 775 storage bootstrap/cache
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Limpiar caché, regenerar clave y recargar variables de entorno
-RUN rm -f .env && cp .env.example .env && php artisan config:clear && php artisan cache:clear && php artisan key:generate
+# Limpiar caché y copiar .env.example (sin dependencias de base de datos)
+RUN rm -f .env && cp .env.example .env && php artisan config:clear
 
+# Exponer el puerto de Apache
 EXPOSE $PORT
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${PORT}"]
+
+# Comando para iniciar Laravel
+CMD php artisan cache:clear && php artisan key:generate && php artisan serve --host=0.0.0.0 --port=${PORT}
