@@ -41,4 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rutas para asignar y quitar etiquetas
     Route::post('/tasks/{taskId}/tags', [TagController::class, 'assignTagToTask']);
     Route::delete('/tasks/{taskId}/tags/{tagId}', [TagController::class, 'removeTagFromTask']);
+
+    // Ruta para calendario
+    Route::get('/tasks/calendar', [TaskController::class, 'calendarTasks']);
 });
