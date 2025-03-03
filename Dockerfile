@@ -21,12 +21,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY . /var/www/html
 WORKDIR /var/www/html
 
+# Configurar permisos
+RUN chmod -R 777 storage bootstrap/cache
+
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
-RUN php artisan config:clear && php artisan cache:clear && php artisan key:generate
 
-# Configura permisos
-RUN chmod -R 777 storage bootstrap/cache
+# Limpia caché y genera clave
+RUN php artisan config:clear && php artisan cache:clear && php artisan key:generate
 
 # Exponer el puerto de Apache
 EXPOSE 8000
