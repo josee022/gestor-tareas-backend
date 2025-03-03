@@ -22,7 +22,8 @@ COPY . /var/www/html
 WORKDIR /var/www/html
 
 # Configurar permisos
-RUN chmod -R 777 storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
 
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
@@ -30,8 +31,5 @@ RUN composer install --no-dev --optimize-autoloader
 # Limpiar caché, regenerar clave y recargar variables de entorno
 RUN rm -f .env && cp .env.example .env && php artisan config:clear && php artisan cache:clear && php artisan key:generate
 
-# Exponer el puerto de Apache
-EXPOSE 8000
-
-# Comando para iniciar Laravel
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+EXPOSE $PORT
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=${PORT}"]
