@@ -23,6 +23,11 @@ WORKDIR /var/www/html
 
 # Configurar la conexión a PostgreSQL en el entorno
 ENV DB_CONNECTION=pgsql
+ENV DB_HOST=dpg-cv26alumphs739kuhoh0-a
+ENV DB_PORT=5432
+ENV DB_DATABASE=gestor_tareas_98pb
+ENV DB_USERNAME=gestor_tareas_98pb_user
+ENV DB_PASSWORD=Q2ZzWlNOvDyQ4JtAscJgRwzThXWtXGyZ
 
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
