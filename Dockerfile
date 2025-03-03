@@ -27,8 +27,8 @@ RUN chmod -R 777 storage bootstrap/cache
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# Limpia caché y genera clave
-RUN php artisan config:clear && php artisan cache:clear && php artisan key:generate
+# Limpiar caché, regenerar clave y recargar variables de entorno
+RUN rm -f .env && cp .env.example .env && php artisan config:clear && php artisan cache:clear && php artisan key:generate
 
 # Exponer el puerto de Apache
 EXPOSE 8000
