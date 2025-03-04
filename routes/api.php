@@ -7,8 +7,11 @@ use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 // Rutas para logueo, registros y seguridad
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware(['cors'])->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Ruta protegidas
