@@ -16,7 +16,6 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\VerifyCsrfToken::class,
     ];
     protected $middlewareAliases = [
-        'auth:sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         'cors' => \Illuminate\Http\Middleware\HandleCors::class,
     ];
 }
