@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'paths' => ['api/*', 'register', 'login', 'logout'], // Incluye todas las rutas necesarias
+    'paths' => ['api/*', 'register', 'login', 'logout', 'tasks'], // Incluye todas las rutas necesarias
     'allowed_methods' => ['*'],
     'allowed_origins' => ['*'],
     'allowed_origins_patterns' => [],
