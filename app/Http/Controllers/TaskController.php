@@ -8,9 +8,15 @@ use App\Models\Task;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Task::with('tags')->get();
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $tasks = Task::where('user_id', $request->user_id)->with('tags')->get();
+
+        return response()->json($tasks);
     }
 
     public function store(Request $request)
@@ -44,7 +50,7 @@ class TaskController extends Controller
             return response()->json(['error' => 'Tarea no encontrada'], 404);
         }
 
-        if ($task->user_id !== 1) {
+        if ($task->user_id != $request->user_id) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -66,9 +72,9 @@ class TaskController extends Controller
         return response()->json(['message' => 'Tarea actualizada', 'task' => $task]);
     }
 
-    public function destroy(Task $task)
+    public function destroy(Request $request, Task $task)
     {
-        if ($task->user_id !== 1) {
+        if ($task->user_id != $request->user_id) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
