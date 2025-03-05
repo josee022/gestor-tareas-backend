@@ -37,8 +37,18 @@ class AuthController extends Controller
             return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
-        return response()->json(['message' => 'Login exitoso']);
+        $user = Auth::user();
+
+        return response()->json([
+            'message' => 'Login exitoso',
+            'user' => [
+                'id' => $user->id, 
+                'name' => $user->name,
+                'email' => $user->email
+            ]
+        ]);
     }
+
 
     public function logout(Request $request)
     {
