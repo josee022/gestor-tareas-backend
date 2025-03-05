@@ -21,6 +21,7 @@ class TaskController extends Controller
             'priority' => 'required|in:baja,media,alta,urgente',
             'due_date' => 'nullable|date',
             'status' => 'required|in:pendiente,completada',
+            'user_id' => 'required|exists:users,id'
         ]);
 
         $task = Task::create([
@@ -29,12 +30,11 @@ class TaskController extends Controller
             'priority' => $request->priority,
             'due_date' => $request->due_date,
             'status' => $request->status,
-            'user_id' => 1,
+            'user_id' => $request->user_id,
         ]);
 
         return response()->json($task);
     }
-
 
     public function update(Request $request, $id)
     {
